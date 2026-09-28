@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Recipe Coach</title>
+<!-- Google Fonts & Material Symbols -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+<style>
+  :root {
+    --accent: #2e7d32;
+    --accent-dark: #1b5e20;
+    --accent-light: #e8f5e9;
+    --accent-gradient: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+    --bg: #f4f6f8;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --header-bg: #ffffff;
+    --input-bg: #f8fafc;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1);
+  }
+
+  [data-theme="dark"] {
+    --accent: #10b981;
+    --accent-dark: #059669;
+    --accent-light: rgba(16, 185, 129, 0.15);
+    --accent-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --border: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --header-bg: #1e293b;
+    --input-bg: #0f172a;
+  }
+
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  /* Header Branding & Controls */
+  header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+    z-index: 10;
+    gap: 1rem;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .sidebar-toggle-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-toggle-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+
+  .brand-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--accent-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.25);
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .brand-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .icon-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.65rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .icon-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-weight: 600;
+    background: var(--accent-light);
+    padding: 0.3rem 0.65rem;
+    border-radius: 20px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+
+  /* Layout Container & Collapsible Sidebar */
+  .app-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Collapsible Navigation Sidebar */
+  .nav-sidebar {
+    width: 230px;
+    background: var(--header-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 15;
+    flex-shrink: 0;
+  }
+
+  .nav-sidebar.collapsed {
+    width: 68px;
+  }
+
+  .sidebar-header {
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .nav-sidebar.collapsed .sidebar-label {
+    display: none;
+  }
+
+  .sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.85rem 0.6rem;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .nav-item:hover {
+    background: var(--bg);
+    color: var(--accent);
+  }
+
+  .nav-item.active {
+    background: var(--accent-gradient);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.22);
+  }
+
+  .nav-item-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+  }
+
+  .nav-item-text {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .nav-sidebar.collapsed .nav-item-text {
+    display: none;
+  }
+
+  .nav-sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 0.65rem 0;
+  }
+
+  .sidebar-footer {
+    padding: 0.85rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-sidebar.collapsed .sidebar-footer {
+    align-items: center;
+    padding: 0.85rem 0.4rem;
+  }
+
+  /* Main Container */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Dialogue Container */
+  #log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    scroll-behavior: smooth;
+  }
+
+  /* Welcome Hero & Interactive Capability Cards */
+  .welcome-hero {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .welcome-header {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .capability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .cap-card {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.1rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cap-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3.5px;
+    background: var(--accent-gradient);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .cap-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    background: var(--card-bg);
+  }
+
+  .cap-card:hover::before {
+    opacity: 1;
+  }
+
+  .cap-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cap-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+
+  .cap-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+  }
+
+  .cap-title {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .cap-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+    flex: 1;
+  }
+
+  .cap-action-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .cap-btn {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+  }
+
+  .cap-btn.primary {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid rgba(46, 125, 50, 0.3);
+    flex: 1;
+  }
+
+  .cap-btn.primary:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .cap-btn.secondary {
+    background: var(--bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .cap-btn.secondary:hover {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border-color: var(--accent);
+  }
+
+  /* Chat Message Rows */
+  .msg-row {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 88%;
+    animation: fadeInUp 0.25s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-row.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+  }
+
+  .msg-row.agent {
+    align-self: flex-start;
+  }
+
+  .msg-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+  }
+
+  .msg-row.user .msg-avatar {
+    background: var(--border);
+    color: var(--text-secondary);
+  }
+
+  .msg-row.agent .msg-avatar {
+    background: var(--accent-gradient);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(46, 125, 50, 0.2);
+  }
+
+  .bubble {
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .msg-row.user .bubble {
+    background: var(--accent-gradient);
+    color: #ffffff;
+    border: none;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.18);
+  }
+
+  .msg-row.agent .bubble {
+    border-bottom-left-radius: 4px;
+  }
+
+  .bubble.rich {
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    white-space: normal;
+    width: 100%;
+  }
+
+  /* Animated Thinking Indicator */
+  .thinking-box {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .dots-loader {
+    display: flex;
+    gap: 4px;
+  }
+
+  .dots-loader div {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+  }
+
+  .dots-loader div:nth-child(1) { animation-delay: -0.32s; }
+  .dots-loader div:nth-child(2) { animation-delay: -0.16s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+  }
+
+  /* Prompts Bar */
+  .prompts-container {
+    padding: 0.65rem 1.25rem 0.25rem;
+    background: var(--card-bg);
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    border-top: 1px solid var(--border);
+  }
+
+  .prompts-label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .prompts-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .prompt-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .prompt-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Input Form & Speech Mic */
+  form {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.85rem 1.25rem 1.1rem;
+    background: var(--card-bg);
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .mic-btn {
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .mic-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .mic-btn.listening {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    animation: pulseMic 1.2s infinite;
+  }
+
+  @keyframes pulseMic {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  }
+
+  input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s ease;
+    background: var(--input-bg);
+    color: var(--text-primary);
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    background: var(--card-bg);
+    box-shadow: 0 0 0 3.5px rgba(46, 125, 50, 0.15);
+  }
+
+  button.send-btn {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--accent-gradient);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+  }
+
+  button.send-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(46, 125, 50, 0.28);
+  }
+
+  /* Slide-out Drawer */
+  .drawer-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 20;
+  }
+
+  .drawer-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .side-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 320px;
+    background: var(--card-bg);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 25;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+  }
+
+  .side-drawer.open {
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+  }
+
+  .drawer-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .drawer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .section-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fav-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .fav-item:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* --- A2UI Component Enhancements --- */
+  .a2card {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    background: var(--card-bg);
+    box-shadow: var(--shadow-md);
+    max-width: 100%;
+    margin-top: 0.4rem;
+    position: relative;
+  }
+
+  .a2card + .a2card, .a2col > .a2card { margin-top: 0.75rem; }
+  .a2col { display: flex; flex-direction: column; gap: 0.5rem; }
+  .a2row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+  .a2row.between { justify-content: space-between; }
+  
+  .a2text { margin: 0; line-height: 1.5; color: var(--text-primary); }
+  .a2text.a2-h1 { font-size: 1.4rem; font-weight: 700; color: var(--accent-dark); }
+  .a2text.a2-h2 { font-size: 1.2rem; font-weight: 700; color: var(--accent-dark); }
+  .a2text.a2-h3 { font-size: 1.05rem; font-weight: 600; margin-top: 0.4rem; color: var(--text-primary); }
+  .a2text.a2-h4 { font-size: 0.95rem; font-weight: 600; }
+  .a2text.a2-caption { font-size: 0.82rem; color: var(--text-secondary); }
+  
+  .a2divider { border: none; border-top: 1px solid var(--border); margin: 0.6rem 0; width: 100%; }
+  
+  .a2img {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    display: block;
+    box-shadow: var(--shadow-sm);
+    margin: 0.5rem 0;
+  }
+
+  .card-action-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-action-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .card-action-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-size: 1.2rem;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
+  /* Responsive Mobile Layout */
+  @media (max-width: 768px) {
+    .nav-sidebar {
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      transform: translateX(-100%);
+      box-shadow: var(--shadow-lg);
+    }
+    .nav-sidebar:not(.collapsed) {
+      transform: translateX(0);
+      width: 240px;
+    }
+    .prompts-row {
+      grid-template-columns: 1fr;
+    }
+    .capability-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Custom Scrollbar */
+  #log::-webkit-scrollbar { width: 6px; }
+  #log::-webkit-scrollbar-track { background: transparent; }
+  #log::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  #log::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button type="button" class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Collapsible Navigation Sidebar">
+      <span class="material-symbols-outlined" id="sidebar-toggle-icon">menu_open</span>
+    </button>
+
+    <div class="header-brand" id="brand-home-btn" title="Return to Home / Clear Chat">
+      <div class="brand-avatar">🍳</div>
+      <div>
+        <h1 class="brand-title">Smart Recipe Coach</h1>
+        <div class="brand-subtitle">Dynamic AI Culinary Assistant</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="header-controls">
+    <button type="button" class="icon-btn" id="home-btn" title="Reset Chat / Welcome Screen">
+      <span class="material-symbols-outlined">home</span>
+      <span>Home</span>
+    </button>
+
+    <button type="button" class="icon-btn" id="drawer-toggle" title="Open Saved & Pantry Drawer">
+      <span class="material-symbols-outlined">collections_bookmark</span>
+      <span>Saved</span>
+    </button>
+    
+    <button type="button" class="icon-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+      <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+    </button>
+
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      <span>Agent Active</span>
+    </div>
+  </div>
+</header>
+
+<div class="app-body">
+  <!-- Collapsible Navigation Sidebar -->
+  <aside class="nav-sidebar" id="nav-sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-label">Navigation</span>
+    </div>
+
+    <nav class="sidebar-menu">
+      <button type="button" class="nav-item active" data-cat="all" title="🌟 All Features">
+        <span class="nav-item-icon">🌟</span>
+        <span class="nav-item-text">All Features</span>
+      </button>
+
+      <button type="button" class="nav-item" data-cat="recipes" title="🥗 Recipes">
+        <span class="nav-item-icon">🥗</span>
+        <span class="nav-item-text">Recipes</span>
+      </button>
+
+      <button type="button" class="nav-item" data-cat="video" title="🎬 Videos">
+        <span class="nav-item-icon">🎬</span>
+        <span class="nav-item-text">Videos</span>
+      </button>
+
+      <button type="button" class="nav-item" data-cat="pantry" title="📦 Pantry">
+        <span class="nav-item-icon">📦</span>
+        <span class="nav-item-text">Pantry</span>
+      </button>
+
+      <button type="button" class="nav-item" data-cat="macros" title="📊 Nutrition">
+        <span class="nav-item-icon">📊</span>
+        <span class="nav-item-text">Nutrition</span>
+      </button>
+
+      <button type="button" class="nav-item" data-cat="images" title="📸 Photos">
+        <span class="nav-item-icon">📸</span>
+        <span class="nav-item-text">Photos</span>
+      </button>
+
+      <button type="button" class="nav-item" data-cat="stores" title="🛒 Stores">
+        <span class="nav-item-icon">🛒</span>
+        <span class="nav-item-text">Stores</span>
+      </button>
+    </nav>
+  </aside>
+
+    <!-- Main Chat Content -->
+  <main class="main-content">
+    <div id="log"></div>
+
+    <form id="form">
+      <button type="button" class="mic-btn" id="mic-btn" title="Voice Input (Click to speak)">
+        <span class="material-symbols-outlined" id="mic-icon">mic</span>
+      </button>
+
+      <input id="input" placeholder="Ask for recipes, short videos, nutrition calculations, pantry checks..." autocomplete="off" autofocus>
+
+      <button type="submit" class="send-btn">
+        <span>Send</span>
+        <span class="material-symbols-outlined" style="color:#fff; font-size:1.1rem;">send</span>
+      </button>
+    </form>
+  </main>
+
+  <!-- Slide-out Drawer Overlay & Container -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <div class="side-drawer" id="side-drawer">
+    <div class="drawer-header">
+      <h3 class="drawer-title">
+        <span class="material-symbols-outlined" style="color:var(--accent)">bookmark</span>
+        <span>Saved & Favorites</span>
+      </h3>
+      <button type="button" class="icon-btn" id="drawer-close">✕</button>
+    </div>
+
+    <div class="drawer-section">
+      <div class="section-label">⭐ Saved Recipes</div>
+      <div id="saved-recipes-list">
+        <div class="fav-item" onclick="fillPrompt('Show recipe for Mustard Champ', true)">
+          <span> Mustard Champ</span>
+          <span class="material-symbols-outlined" style="font-size:0.9rem">arrow_forward</span>
+        </div>
+        <div class="fav-item" onclick="fillPrompt('Suggest a 15-minute quick dinner recipe', false)">
+          <span> 15-Min Quick Dinner</span>
+          <span class="material-symbols-outlined" style="font-size:0.9rem">edit_note</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="section-label">📦 Quick Pantry Actions</div>
+      <div class="fav-item" onclick="fillPrompt('What is in my pantry?', true)">
+        <span>📦 Check Pantry Inventory</span>
+      </div>
+      <div class="fav-item" onclick="fillPrompt('Add  to my pantry', false)">
+        <span>➕ Add Custom Item to Pantry</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const log = document.getElementById("log");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const themeToggle = document.getElementById("theme-toggle");
+const themeIcon = document.getElementById("theme-icon");
+const drawerToggle = document.getElementById("drawer-toggle");
+const drawerClose = document.getElementById("drawer-close");
+const drawerOverlay = document.getElementById("drawer-overlay");
+const sideDrawer = document.getElementById("side-drawer");
+const micBtn = document.getElementById("mic-btn");
+const homeBtn = document.getElementById("home-btn");
+const brandHomeBtn = document.getElementById("brand-home-btn");
+const sidebarToggle = document.getElementById("sidebar-toggle");
+const sidebarToggleIcon = document.getElementById("sidebar-toggle-icon");
+const navSidebar = document.getElementById("nav-sidebar");
+
+/* --- 1. Collapsible Sidebar Toggle --- */
+let sidebarCollapsed = false;
+sidebarToggle.addEventListener("click", () => {
+  sidebarCollapsed = !sidebarCollapsed;
+  navSidebar.classList.toggle("collapsed", sidebarCollapsed);
+  sidebarToggleIcon.textContent = sidebarCollapsed ? "menu" : "menu_open";
+});
+
+/* --- 2. Interactive Fill & Submit Helper --- */
+function fillPrompt(text, submitImmediately = false) {
+  toggleDrawer(false);
+  input.value = text;
+  input.focus();
+  
+  // Set cursor position at end of text for easy user customization
+  const len = input.value.length;
+  input.setSelectionRange(len, len);
+  
+  if (submitImmediately) {
+    form.dispatchEvent(new Event("submit"));
+  } else {
+    form.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+}
+
+/* --- 3. Capability Cards Configuration --- */
+const CAPABILITIES = [
+  {
+    icon: "restaurant_menu",
+    tag: "Recipes",
+    cat: "recipes",
+    title: "Recipe Search & Creation",
+    desc: "Discover quick dinners, high-protein meals, or search Firestore & online databases.",
+    template: "Suggest a healthy recipe for ",
+    sample: "Suggest a 20-minute healthy dinner recipe with step-by-step instructions"
+  },
+  {
+    icon: "videocam",
+    tag: "Media",
+    cat: "video",
+    title: "Omni Model Cooking Videos",
+    desc: "Generate custom short cooking videos using Gemini Omni model or fetch relevant online recipe videos.",
+    template: "Generate a short cooking video of ",
+    sample: "Generate a short video of a sizzling salmon steak on a pan"
+  },
+  {
+    icon: "photo_camera",
+    tag: "Photos",
+    cat: "images",
+    title: "Generative Dish Photography",
+    desc: "Create photorealistic food photography for any dish request using Gemini Image AI.",
+    template: "Generate a photo of ",
+    sample: "Generate a photo of an avocado toast with poached eggs"
+  },
+  {
+    icon: "inventory_2",
+    tag: "Pantry",
+    cat: "pantry",
+    title: "Pantry Inventory Tracker",
+    desc: "Track stored ingredients, manage stock, and generate custom meals using on-hand items.",
+    template: "What is currently in my pantry inventory?",
+    sample: "What is currently in my pantry inventory and what can I cook with it?"
+  },
+  {
+    icon: "analytics",
+    tag: "Nutrition",
+    cat: "macros",
+    title: "Calorie & Macro Calculator",
+    desc: "Calculate precise calories, protein, carbs, and fats for custom ingredient weights.",
+    template: "Calculate nutrition and macros for ",
+    sample: "Calculate nutrition and macros for 200g grilled chicken breast and 15g olive oil"
+  },
+  {
+    icon: "storefront",
+    tag: "Stores",
+    cat: "stores",
+    title: "Nearby Grocery Finder",
+    desc: "Locate nearby supermarkets, Whole Foods, or local markets with live Google Places maps.",
+    template: "Find nearby grocery stores in ",
+    sample: "Find nearby grocery stores in San Jose, CA"
+  }
+];
+
+function renderWelcomeHero(filterCat = "all") {
+  log.innerHTML = "";
+  
+  const hero = el("div", "welcome-hero");
+  
+  const headerBox = el("div", "welcome-header");
+  const title = el("h2", "welcome-title");
+  title.innerHTML = `<span>Welcome to Smart Recipe Coach</span> <span>👋</span>`;
+  
+  const subtitle = el("p", "welcome-subtitle", "Your dynamic AI culinary assistant. Click any feature card to use its template, or run a sample demo!");
+  
+  headerBox.appendChild(title);
+  headerBox.appendChild(subtitle);
+  hero.appendChild(headerBox);
+
+  const grid = el("div", "capability-grid");
+  
+  const filteredCaps = filterCat === "all" ? CAPABILITIES : CAPABILITIES.filter(c => c.cat === filterCat);
+
+  filteredCaps.forEach(cap => {
+    const card = el("div", "cap-card");
+    
+    const cardHeader = el("div", "cap-card-header");
+    const iconBox = el("div", "cap-icon");
+    const iconSpan = el("span", "material-symbols-outlined", cap.icon);
+    iconBox.appendChild(iconSpan);
+    
+    const tagSpan = el("span", "cap-tag", cap.tag);
+    cardHeader.appendChild(iconBox);
+    cardHeader.appendChild(tagSpan);
+
+    const cTitle = el("h3", "cap-title", cap.title);
+    const cDesc = el("p", "cap-desc", cap.desc);
+
+    const actionBox = el("div", "cap-action-box");
+    
+    const useBtn = el("button", "cap-btn primary", "");
+    useBtn.type = "button";
+    useBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size:0.95rem">edit_note</span> <span>Use Template</span>`;
+    
+    const demoBtn = el("button", "cap-btn secondary", "");
+    demoBtn.type = "button";
+    demoBtn.title = `Run sample demo: "${cap.sample}"`;
+    demoBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size:0.9rem">play_arrow</span> <span>Sample Demo</span>`;
+    
+    useBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      fillPrompt(cap.template, false);
+    });
+
+    demoBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      fillPrompt(cap.sample, true);
+    });
+
+    // Clicking card main body populates customizable template without auto-submitting
+    card.addEventListener("click", () => {
+      fillPrompt(cap.template, false);
+    });
+
+    actionBox.appendChild(useBtn);
+    actionBox.appendChild(demoBtn);
+
+    card.appendChild(cardHeader);
+    card.appendChild(cTitle);
+    card.appendChild(cDesc);
+    card.appendChild(actionBox);
+
+    grid.appendChild(card);
+  });
+
+  hero.appendChild(grid);
+  log.appendChild(hero);
+  log.scrollTop = 0;
+}
+
+// Render Welcome Screen on page load
+renderWelcomeHero();
+
+homeBtn.addEventListener("click", () => {
+  setActiveSidebarItem("all");
+  renderWelcomeHero("all");
+});
+brandHomeBtn.addEventListener("click", () => {
+  setActiveSidebarItem("all");
+  renderWelcomeHero("all");
+});
+
+/* --- 4. Theme Switcher (Dark/Light) --- */
+let isDark = false;
+themeToggle.addEventListener("click", () => {
+  isDark = !isDark;
+  document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+  themeIcon.textContent = isDark ? "light_mode" : "dark_mode";
+});
+
+/* --- 5. Side Drawer Toggle --- */
+function toggleDrawer(open) {
+  sideDrawer.classList.toggle("open", open);
+  drawerOverlay.classList.toggle("open", open);
+}
+drawerToggle.addEventListener("click", () => toggleDrawer(true));
+drawerClose.addEventListener("click", () => toggleDrawer(false));
+drawerOverlay.addEventListener("click", () => toggleDrawer(false));
+
+function quickQuery(text) {
+  toggleDrawer(false);
+  input.value = text;
+  form.dispatchEvent(new Event("submit"));
+}
+
+/* --- 5. Navigation Sidebar Category Integration --- */
+function setActiveSidebarItem(cat) {
+  document.querySelectorAll(".nav-item").forEach(item => {
+    item.classList.toggle("active", item.getAttribute("data-cat") === cat);
+  });
+}
+
+document.querySelectorAll(".nav-item").forEach(item => {
+  item.addEventListener("click", (e) => {
+    const cat = e.currentTarget.getAttribute("data-cat");
+    setActiveSidebarItem(cat);
+    if (log.querySelector(".welcome-hero")) {
+      renderWelcomeHero(cat);
+    }
+  });
+});
+
+/* --- 6. Hands-Free Voice Input (Speech-to-Text) --- */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  let recognition = null;
+  let listening = false;
+
+  function initRecognition() {
+    try {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        listening = true;
+        micBtn.classList.add("listening");
+        micBtn.title = "Listening... Speak into your microphone";
+        input.placeholder = "🎙️ Listening... Speak now!";
+      };
+
+      recognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript.trim()) {
+          input.value = transcript;
+        }
+      };
+
+      recognition.onerror = (event) => {
+        listening = false;
+        micBtn.classList.remove("listening");
+        input.placeholder = "Ask for recipes, short videos, nutrition calculations, pantry checks...";
+        console.warn("Speech recognition error:", event.error);
+        if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+          alert("Microphone permission denied. Please allow microphone access in your browser address bar to use voice input.");
+        }
+      };
+
+      recognition.onend = () => {
+        listening = false;
+        micBtn.classList.remove("listening");
+        input.placeholder = "Ask for recipes, short videos, nutrition calculations, pantry checks...";
+        if (input.value.trim()) {
+          input.focus();
+        }
+      };
+    } catch (e) {
+      console.error("SpeechRecognition initialization failed:", e);
+    }
+  }
+
+  initRecognition();
+
+  micBtn.addEventListener("click", () => {
+    if (!listening) {
+      try {
+        if (!recognition) initRecognition();
+        recognition.start();
+      } catch (err) {
+        console.warn("Recognition start failed, re-initializing:", err);
+        initRecognition();
+        try { recognition.start(); } catch (e) {}
+      }
+    } else {
+      if (recognition) recognition.stop();
+      listening = false;
+      micBtn.classList.remove("listening");
+    }
+  });
+} else {
+  micBtn.addEventListener("click", () => {
+    alert("Speech recognition is not supported by your current browser or HTTP security context. Please type your query in the input box!");
+  });
+}
+
+/* --- 7. Helper Functions & Message Rows --- */
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function bubble(who) {
+  // If welcome hero is currently present, clear it when conversation starts
+  const hero = log.querySelector(".welcome-hero");
+  if (hero) hero.remove();
+
+  const row = el("div", "msg-row " + who);
+  const avatar = el("div", "msg-avatar", who === "user" ? "👤" : "🍳");
+  const b = el("div", "bubble");
+  
+  row.appendChild(avatar);
+  row.appendChild(b);
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+  return b;
+}
+
+/* --- 8. Dynamic Chef Thinking Indicator --- */
+const THINKING_MESSAGES = [
+  "Checking recipe database...",
+  "Inspecting pantry inventory...",
+  "Calculating nutritional macros...",
+  "Consulting Gemini AI Coach...",
+  "Formatting rich A2UI card..."
+];
+
+function createThinkingBubble() {
+  const hero = log.querySelector(".welcome-hero");
+  if (hero) hero.remove();
+
+  const row = el("div", "msg-row agent");
+  const avatar = el("div", "msg-avatar", "🍳");
+  const b = el("div", "bubble");
+  
+  const box = el("div", "thinking-box");
+  const loader = el("div", "dots-loader");
+  loader.appendChild(document.createElement("div"));
+  loader.appendChild(document.createElement("div"));
+  loader.appendChild(document.createElement("div"));
+  
+  const label = el("span", "thinking-txt", THINKING_MESSAGES[0]);
+  box.appendChild(loader);
+  box.appendChild(label);
+  b.appendChild(box);
+
+  row.appendChild(avatar);
+  row.appendChild(b);
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+
+  let msgIdx = 0;
+  const msgTimer = setInterval(() => {
+    msgIdx = (msgIdx + 1) % THINKING_MESSAGES.length;
+    label.textContent = THINKING_MESSAGES[msgIdx];
+  }, 1800);
+
+  return { bubble: b, stop: () => clearInterval(msgTimer) };
+}
+
+/* --- 9. A2UI Mini-Renderer v0.8 & Card Action Bar --- */
+function boundStr(v) {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  if (typeof v.literalString === "string") return v.literalString;
+  return "";
+}
+
+function childIds(props) {
+  const ids = [];
+  if (props && typeof props.child === "string") ids.push(props.child);
+  const ch = props && props.children;
+  if (ch && Array.isArray(ch.explicitList)) for (const c of ch.explicitList) if (typeof c === "string") ids.push(c);
+  return ids;
+}
+
+function iconName(n) { return String(n || "").replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/\s+/g, "_").toLowerCase(); }
+
+function buildNode(id, comps, seen) {
+  if (!id || seen.has(id)) return null;
+  seen.add(id);
+  const spec = comps[id];
+  if (!spec || typeof spec !== "object") return null;
+  const type = Object.keys(spec)[0];
+  const props = spec[type] || {};
+  const kids = () => childIds(props).map(cid => buildNode(cid, comps, seen)).filter(Boolean);
+
+  switch (type) {
+    case "Card": {
+      const d = el("div", "a2card"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Column":
+    case "List": {
+      const horizontal = type === "List" && props.direction === "horizontal";
+      const d = el("div", horizontal ? "a2row" : "a2col"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Row": {
+      const d = el("div", "a2row" + (props.distribution === "spaceBetween" ? " between" : ""));
+      kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Text": {
+      const t = el("div", "a2text");
+      const hint = String(props.usageHint || "body").toLowerCase();
+      if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(hint)) t.classList.add("a2-" + hint);
+      else if (hint === "caption") t.classList.add("a2-caption");
+      t.textContent = boundStr(props.text);
+      return t;
+    }
+    case "Divider":
+      return el("hr", "a2divider");
+    case "Image": {
+      const src = boundStr(props.url || props.src);
+      if (!/^https?:\/\//i.test(src)) return null;
+      const img = el("img", "a2img"); img.src = src; img.alt = boundStr(props.alt) || ""; return img;
+    }
+    case "Icon": {
+      const s = el("span", "material-symbols-outlined"); s.textContent = iconName(boundStr(props.name) || props.name); return s;
+    }
+    default:
+      return null;
+  }
+}
+
+function renderSurface(messages, container) {
+  const comps = {};
+  const roots = [];
+  for (const m of messages) {
+    if (m.beginRendering && typeof m.beginRendering.root === "string") roots.push(m.beginRendering.root);
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.id && c.component) comps[c.id] = c.component;
+  }
+  let rootIds = roots.filter(r => comps[r]);
+  if (rootIds.length === 0) {
+    const referenced = new Set();
+    for (const id in comps) { const spec = comps[id]; childIds(spec[Object.keys(spec)[0]] || {}).forEach(c => referenced.add(c)); }
+    rootIds = Object.keys(comps).filter(id => !referenced.has(id));
+  }
+  let drew = false;
+  for (const rid of rootIds) {
+    const node = buildNode(rid, comps, new Set());
+    if (node) {
+      container.appendChild(node);
+      drew = true;
+    }
+  }
+  
+  if (drew) {
+    // Attach Card Actions (Copy, Print)
+    const actionBar = el("div", "card-action-bar");
+    
+    const copyBtn = el("button", "card-action-btn", "📋 Copy");
+    copyBtn.type = "button";
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(container.innerText);
+      copyBtn.textContent = "✅ Copied!";
+      setTimeout(() => copyBtn.textContent = "📋 Copy", 2000);
+    };
+
+    const printBtn = el("button", "card-action-btn", "🖨️ Print");
+    printBtn.type = "button";
+    printBtn.onclick = () => window.print();
+
+    actionBar.appendChild(copyBtn);
+    actionBar.appendChild(printBtn);
+    container.appendChild(actionBar);
+  }
+
+  return drew;
+}
+
+function flattenText(messages) {
+  const out = [];
+  for (const m of messages) {
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.component && c.component.Text) out.push(boundStr(c.component.Text.text));
+  }
+  return out.join("\n").trim();
+}
+
+function formatMarkdown(str) {
+  if (!str) return "";
+  // Strip any lingering A2UI or datapart XML tags first
+  let s = str
+    .replace(/<a2ui-json>[\s\S]*?<\/a2ui-json>/gi, "")
+    .replace(/<a2a_datapart_json>[\s\S]*?<\/a2a_datapart_json>/gi, "")
+    .replace(/<\/?a2ui-json>/gi, "")
+    .replace(/<\/?a2a_datapart_json>/gi, "")
+    .trim();
+
+  // Escape HTML entities to prevent injection
+  s = s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Format headers
+  s = s.replace(/^### (.*$)/gim, "<h4 style='margin:0.5rem 0 0.2rem;color:var(--accent);font-size:1.05rem;'>$1</h4>");
+  s = s.replace(/^## (.*$)/gim, "<h3 style='margin:0.6rem 0 0.3rem;color:var(--accent);font-size:1.15rem;'>$1</h3>");
+  
+  // Format bold **text**
+  s = s.replace(/\*\*(.*?)\*\*/g, "<strong style='color:var(--heading);'>$1</strong>");
+  
+  // Format italics *text*
+  s = s.replace(/\*([^\*]+)\*/g, "<em>$1</em>");
+  
+  // Format bullet items (*, -, •)
+  s = s.replace(/^\s*[\*\-\•]\s+(.*$)/gim, "<div style='margin-left:1.2rem;margin-top:0.2rem;'>• $1</div>");
+  
+  // Convert newlines to line breaks
+  s = s.replace(/\n/g, "<br>");
+  return s;
+}
+
+function renderReply(b, parts) {
+  b.textContent = "";
+  const texts = [];
+  const a2ui = [];
+
+  for (const p of parts || []) {
+    if (!p) continue;
+    if (p.kind === "a2ui" && p.data) {
+      a2ui.push(p.data);
+    } else {
+      let rawText = p.text || "";
+      
+      // Extract <a2ui-json> blocks
+      if (rawText.includes("<a2ui-json>")) {
+        const matches = rawText.match(/<a2ui-json>([\s\S]*?)<\/a2ui-json>/g);
+        if (matches) {
+          for (const m of matches) {
+            const inner = m.replace(/<\/?a2ui-json>/g, "").trim();
+            try {
+              const obj = JSON.parse(inner);
+              a2ui.push(obj.data || obj);
+            } catch (e) {}
+          }
+        }
+        rawText = rawText.replace(/<a2ui-json>[\s\S]*?<\/a2ui-json>/g, "").trim();
+      }
+
+      // Extract <a2a_datapart_json> blocks
+      if (rawText.includes("<a2a_datapart_json>")) {
+        const matches = rawText.match(/<a2a_datapart_json>([\s\S]*?)<\/a2a_datapart_json>/g);
+        if (matches) {
+          for (const m of matches) {
+            const inner = m.replace(/<\/?a2a_datapart_json>/g, "").trim();
+            try {
+              const obj = JSON.parse(inner);
+              a2ui.push(obj.data || obj);
+            } catch (e) {}
+          }
+        }
+        rawText = rawText.replace(/<a2a_datapart_json>[\s\S]*?<\/a2a_datapart_json>/g, "").trim();
+      }
+
+      if (rawText.trim()) {
+        texts.push(rawText.trim());
+      }
+    }
+  }
+
+  let textStr = texts.join("\n").trim();
+  
+  // Format raw JSON text strings (e.g. pantry inventory or tool outputs) into human-readable culinary lists
+  if (textStr && (textStr.startsWith("[") || textStr.startsWith("{"))) {
+    try {
+      const parsed = JSON.parse(textStr);
+      if (Array.isArray(parsed)) {
+        if (parsed.length === 0) {
+          textStr = "📦 Your pantry is currently empty. You can add items by typing e.g. 'Add 2 lbs salmon to my pantry'!";
+        } else {
+          const lines = ["📦 **Current Pantry Inventory:**\n"];
+          parsed.forEach((item, idx) => {
+            const name = item.item_name || item.name || item.item || `Item ${idx + 1}`;
+            const qty = item.quantity || item.amount || "";
+            const cat = item.category ? ` (${item.category})` : "";
+            const exp = item.expiration_date ? ` [Expires: ${item.expiration_date}]` : "";
+            lines.push(`• **${name}**${qty ? `: ${qty}` : ""}${cat}${exp}`);
+          });
+          textStr = lines.join("\n");
+        }
+      } else if (typeof parsed === "object" && parsed !== null) {
+        if (parsed.message) textStr = parsed.message;
+        else if (parsed.status) textStr = `Status: ${parsed.status}`;
+      }
+    } catch (e) {}
+  }
+
+  if (textStr) {
+    const txtNode = el("div", "formatted-text");
+    txtNode.innerHTML = formatMarkdown(textStr);
+    b.appendChild(txtNode);
+  }
+
+  if (a2ui.length) {
+    b.classList.add("rich");
+    if (!renderSurface(a2ui, b)) b.appendChild(el("div", null, flattenText(a2ui) || "(no card content)"));
+  }
+  if (!b.childNodes.length) b.textContent = "(no response)";
+  log.scrollTop = log.scrollHeight;
+}
+
+/* --- 10. Chat Form Submission Handler --- */
+form.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  bubble("user").textContent = text;
+  input.value = "";
+  
+  const thinking = createThinkingBubble();
+  
+  try {
+    const res = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text }) });
+    const raw = await res.text();
+    thinking.stop();
+    
+    let data;
+    try { data = JSON.parse(raw); }
+    catch { throw new Error(`Server returned non-JSON (HTTP ${res.status}). ${raw.slice(0, 300)}`); }
+    
+    renderReply(thinking.bubble, data.parts || []);
+  } catch (e) {
+    thinking.stop();
+    thinking.bubble.textContent = "";
+    const errBox = el("div", "a2card", null);
+    errBox.style.borderLeftColor = "#ef4444";
+    const errText = el("p", "a2text", "⚠️ Chef service temporarily busy or disconnected. " + e.message);
+    const retryBtn = el("button", "card-action-btn", "🔄 Retry Request");
+    retryBtn.type = "button";
+    retryBtn.style.marginTop = "0.5rem";
+    retryBtn.onclick = () => {
+      input.value = text;
+      form.dispatchEvent(new Event("submit"));
+    };
+    errBox.appendChild(errText);
+    errBox.appendChild(retryBtn);
+    thinking.bubble.appendChild(errBox);
+  }
+});
+</script>
+</body>
+</html>
